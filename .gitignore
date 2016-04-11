@@ -1,2 +1,4 @@
 Shepherd/bin/
 Shepherd/.settings/
+Shepherd/bin/**
+Shepherd/.settings/**
