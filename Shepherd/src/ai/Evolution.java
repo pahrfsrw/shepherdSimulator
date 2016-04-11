@@ -15,7 +15,7 @@ public class Evolution {
 	private static final double uniformRate = 0.5;
     private static final double mutationRate = 0.015;
     public static final int tournamentSize = 5;
-    private static final boolean elitism = true;
+    private static final boolean elitism = false;
     
     private static SimulationResult result;
     
@@ -35,13 +35,15 @@ public class Evolution {
         }
 
         
+        for (int i = 0; i < pop.size(); i++) {
+        	MainLoop.currentIndiv = i+1;
+        	testIndividual(pop.getIndividual(i));
+        }
+        
+        pop.sort();
+        
         for (int i = elitismOffset; i < pop.size(); i++) {
-        	//System.out.println("Breeding for indiv " + i );
-        	MainLoop.currentIndiv = i;
-        	MainLoop.currentTournament = 1;
-            Shepherd indiv1 = tournamentSelection(pop);
-            //System.out.println("Selecting indiv 2");
-            MainLoop.currentTournament = 2;
+        	Shepherd indiv1 = tournamentSelection(pop);
             Shepherd indiv2 = tournamentSelection(pop);
             Shepherd newIndiv = crossover(indiv1, indiv2);
             newPopulation.saveIndividual(i, newIndiv);
@@ -81,6 +83,11 @@ public class Evolution {
             }
         }
     }
+    
+    private static void testIndividual(Shepherd s){
+    	SimulationResult result = MyMonitor.getResult(s);
+    	s.setFitness(result);
+    }
 
     // Select individuals for crossover
     private static Shepherd tournamentSelection(Population pop) {
@@ -92,19 +99,9 @@ public class Evolution {
             tournament.saveIndividual(i, pop.getIndividual(randomId));
         }
         
-        // Reiknum út fitness hjá hverjum einstaklingi
-        for(int i = 0; i < tournamentSize; i++){
-        	//System.out.println("Tournament place: " + i);
-        	MainLoop.currentTournamentRound = i+1;
-    		SimulationResult result = MyMonitor.getResult(tournament.getIndividual(i));
-        	tournament.getIndividual(i).setFitness(result);
-        }
-        
         // Get the fittest
         Shepherd fittest = tournament.getFittest();
         return fittest;
     }
-    
-    // http://stackoverflow.com/questions/289434/how-to-make-a-java-thread-wait-for-another-threads-output
 
 }
