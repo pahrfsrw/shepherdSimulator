@@ -25,8 +25,8 @@ public class EntityManager {
 	private boolean hasHerdMoved = false;
 	private boolean hasShepherdMoved = false;
 	
-	private int sheepCol = 2;
-	private int sheepRow = 2;
+	private int sheepCol = 5;
+	private int sheepRow = 5;
 	
 	private EntityManager(){newSim();};
 	

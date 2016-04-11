@@ -5,7 +5,6 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import ai.FitnessAnalyzer;
 import simulation.EntityManager;
 import simulation.MainLoop;
 import simulation.Shepherd;

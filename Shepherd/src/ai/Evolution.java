@@ -13,27 +13,29 @@ public class Evolution {
 	private static CountDownLatch latch = new CountDownLatch(1);
 	private static MyMonitor monitor = MainLoop.monitor;
 	private static final double uniformRate = 0.5;
-    private static final double mutationRate = 0.015;
-    public static final int tournamentSize = 5;
-    private static final boolean elitism = false;
+    private static final double mutationRate = 0.1;
+    public static final int tournamentSize = 10;
+    private static final boolean elitism = true;
+    private static final int defaultElitismOffset = 1; // Það virðist hættulegt að stækka þ
     
     private static SimulationResult result;
     
     public static Population evolvePopulation(Population pop) {
     	MainLoop.currentGen++;
         Population newPopulation = new Population(pop.size(), false);
-
-        if (elitism) {
-            newPopulation.saveIndividual(0, pop.getFittest());
-        }
-
+        
         int elitismOffset;
         if (elitism) {
-            elitismOffset = 1;
+            elitismOffset = defaultElitismOffset;
         } else {
             elitismOffset = 0;
         }
 
+        if (elitism) {
+        	for(int i = 0; i < elitismOffset; i++){
+        		newPopulation.saveIndividual(i, pop.getFittest());
+        	}
+        }
         
         for (int i = 0; i < pop.size(); i++) {
         	MainLoop.currentIndiv = i+1;

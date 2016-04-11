@@ -48,9 +48,30 @@ public class MainLoop {
 	public static int currentIndiv = 0;
 	public static int currentTournament = 0;
 	public static int currentTournamentRound = 0;
+	public static int allTimeMostSheepHerded = 0;
+	public static int allTimeBestTime = Integer.MAX_VALUE;
 	
 	public static int criticalTime = 149040; // Sirka 240 sekúndur á venjulegum hermishraða.
 	public static int criticalGen = (int) Math.pow(10, 6);
+	
+	// Simulation data
+	
+		public static int framesBetweenSnapshots = 120;
+		public static int numberOfSnapshots = 0;
+		public static int lastSnapshotFrame = 0;
+		// Þetta er notað til þess að reikna út meðalfjarlægð allrar hjarðarinnar
+		// frá hliðinu gegnum heila hermun. Fjarlægðin er bara reiknuð á
+		// nokkurra ramma fresti (framesBetweenSnapshots) til að auka hraða forritsins.
+		// Þannig að meðaltal í lok hermunar er avg = sumHerdDistance/numberOfSnapshots.
+		public static double sumHerdDistance = 0;
+		
+		// Þetta virkar eins og meðalfjarlægðin.
+		public static double sumHerdDensity = 0;
+		
+		// Minnstu tölurnar yfir alla hermunina. Það er spurning hvort maður vilji nota þetta.
+		public static final boolean calculateLeastDistance = true;
+		public static double smallestHerdDistance = Double.MAX_VALUE;
+		public static double smallestHerdDensity = Double.MAX_VALUE;
 	
 	private static void runEvolutionLoop(){
 		Thread evolution = new Thread("Evolution thread")
@@ -109,7 +130,7 @@ public class MainLoop {
 					updateSim(delta/(gameSpeed*10));
 					currentSimFrameCount++;
 					totalFrameCount++;
-					
+					updateSimulationData();
 					if(hasWon || currentSimFrameCount > criticalTime){
 						win();
 					}
@@ -152,16 +173,43 @@ public class MainLoop {
 		SimulationResult result = 
 				new SimulationResult(em.getHerded(),
 									 currentSimFrameCount,
-									 em.getHerdDistance(),
-									 em.getHerdDensity(),
+									 smallestHerdDistance/(double)numberOfSnapshots,
+									 smallestHerdDensity/(double)numberOfSnapshots,
 									 em.getHasHerdMoved(),
 									 em.getDistanceToClosestSheep(),
 									 em.getHasShepherdMoved()
 									 );
-		//System.out.println("Notifying");
+		if(em.getHerded() > allTimeMostSheepHerded){
+			allTimeMostSheepHerded = em.getHerded();
+		}
+		
+		if(currentSimFrameCount < allTimeBestTime){
+			allTimeBestTime = currentSimFrameCount;
+		}
 		EntityManager.getInstance().setShepherd(MyMonitor.produceResult(result));
-		//waitForResult();
+
+		
+		
 		newSim();
+	}
+	
+	private static void updateSimulationData(){
+		if(currentSimFrameCount - lastSnapshotFrame < framesBetweenSnapshots){
+			lastSnapshotFrame = currentSimFrameCount;
+			EntityManager em = EntityManager.getInstance();
+			double currentHerdDistance = em.getHerdDistance();
+			double currentHerdDensity = em.getHerdDensity();
+			sumHerdDistance += currentHerdDistance;
+			sumHerdDensity += currentHerdDensity;
+			numberOfSnapshots++;
+			
+			if(calculateLeastDistance){
+				if(smallestHerdDistance > currentHerdDistance)
+					smallestHerdDistance = currentHerdDistance;
+				if(smallestHerdDensity > currentHerdDensity)
+					smallestHerdDensity = currentHerdDensity;
+			}
+		}
 	}
 	
 	private static void updateInfo(){
@@ -173,8 +221,8 @@ public class MainLoop {
 		window.infoPanel.setData("genFrames", currentSimFrameCount);
 		window.infoPanel.setData("totalFrames", totalFrameCount);
 		window.infoPanel.setData("genIndiv", currentIndiv);
-		window.infoPanel.setData("genTourn", currentTournament);
-		window.infoPanel.setData("genTournRound", currentTournamentRound);
+		window.infoPanel.setData("bestTime", allTimeBestTime);
+		window.infoPanel.setData("mostSheepHerded", allTimeMostSheepHerded);
 	}
 	
 	private static void newSim(){

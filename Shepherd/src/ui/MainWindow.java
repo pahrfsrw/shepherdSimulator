@@ -194,9 +194,7 @@ public class MainWindow implements KeyListener, MouseMotionListener, ActionListe
 		infoPanel.addCell("genTime", "Current gen. time: ", "n/a");
 		infoPanel.addCell("genIndiv", "Current indiv: ", "n/a");
 		infoPanel.addCell("genFrames", "Current gen in-game time: ", "n/a");
-		infoPanel.addCell("genTourn", "Current tournament: ", "n/a");
 		infoPanel.addCell("sheep", "Sheep herded: ", "n/a");
-		infoPanel.addCell("genTournRound", "Current t. round: ", "n/a");
 
 		infoPanel.addCell("filler02");
 		infoPanel.addCell("filler03");
@@ -209,9 +207,12 @@ public class MainWindow implements KeyListener, MouseMotionListener, ActionListe
 		
 		infoPanel.addCell("totalFrames", "Total in-game time: ", "n/a");
 		
-		infoPanel.addCell("bestTime", "Best time: ", "n/a");
-		infoPanel.addCell("herdSize", "Herd size:", EntityManager.getInstance().getHerdSize());
 		infoPanel.addCell("critTime", "Critical in-game time:", MainLoop.criticalTime);
+		infoPanel.addCell("herdSize", "Herd size:", EntityManager.getInstance().getHerdSize());
+		
+		infoPanel.addCell("bestTime", "Best time: ", "n/a");
+		infoPanel.addCell("mostSheepHerded", "Most sheep herded:", "n/a");
+		
 	}
 	
 	private void addListeners(){
