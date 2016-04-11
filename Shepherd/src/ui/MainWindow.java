@@ -188,15 +188,27 @@ public class MainWindow implements KeyListener, MouseMotionListener, ActionListe
 		// á öllum gögnum.
 		infoPanel = new InfoPanel();
 		frame.getContentPane().add(infoPanel);
-		infoPanel.addCell("leftCol", "Current generation info:");
-		infoPanel.addCell("rightCol", "General info:");
+		infoPanel.addCell("info01", "Current generation info:");
+		infoPanel.addCell("filler01");
 		infoPanel.addCell("gen", "Current generation: ", "n/a");
-		infoPanel.addCell("sim", "Simulation: ", "n/a");
 		infoPanel.addCell("genTime", "Current gen. time: ", "n/a");
-		infoPanel.addCell("totalTime", "Total time: ", "n/a");
+		infoPanel.addCell("genIndiv", "Current indiv: ", "n/a");
 		infoPanel.addCell("genFrames", "Current gen in-game time: ", "n/a");
-		infoPanel.addCell("totalFrames", "Total in-game time: ", "n/a");
+		infoPanel.addCell("genTourn", "Current tournament: ", "n/a");
 		infoPanel.addCell("sheep", "Sheep herded: ", "n/a");
+		infoPanel.addCell("genTournRound", "Current t. round: ", "n/a");
+
+		infoPanel.addCell("filler02");
+		infoPanel.addCell("filler03");
+		infoPanel.addCell("filler04");
+		infoPanel.addCell("info02", "General info:");
+		
+		infoPanel.addCell("filler05");
+		
+		infoPanel.addCell("totalTime", "Total time: ", "n/a");
+		
+		infoPanel.addCell("totalFrames", "Total in-game time: ", "n/a");
+		
 		infoPanel.addCell("bestTime", "Best time: ", "n/a");
 		infoPanel.addCell("herdSize", "Herd size:", EntityManager.getInstance().getHerdSize());
 		infoPanel.addCell("critTime", "Critical in-game time:", MainLoop.criticalTime);

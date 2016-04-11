@@ -27,7 +27,7 @@ public class MainLoop {
 	public static boolean doInfoUpdates = true;
 	public static int gameSpeed = 10;
 	public static boolean atMaxGameSpeed = false;
-	public static int maxGameSpeed = 50000;
+	public static int maxGameSpeed = 500000000;
 	public static int fps = 60;
 	
 	
@@ -45,6 +45,10 @@ public class MainLoop {
 	
 	// Misc. simulation stuff:
 	public static int currentGen = 0;
+	public static int currentIndiv = 0;
+	public static int currentTournament = 0;
+	public static int currentTournamentRound = 0;
+	
 	public static int criticalTime = 149040; // Sirka 240 sekúndur á venjulegum hermishraða.
 	public static int criticalGen = (int) Math.pow(10, 6);
 	
@@ -105,6 +109,10 @@ public class MainLoop {
 					updateSim(delta/(gameSpeed*10));
 					currentSimFrameCount++;
 					totalFrameCount++;
+					
+					if(hasWon || currentSimFrameCount > criticalTime){
+						win();
+					}
 				}
 				
 				if(doRender){
@@ -122,22 +130,11 @@ public class MainLoop {
 				updateInfo();
 			}
 			
-			if(hasWon || currentSimFrameCount > criticalTime){
-				EntityManager em = EntityManager.getInstance();
-				SimulationResult result = 
-						new SimulationResult(em.getHerded(),
-											 currentSimFrameCount,
-											 em.getHerdDistance(),
-											 em.getHerdDensity(),
-											 em.getHasHerdMoved(),
-											 em.getDistanceToClosestSheep(),
-											 em.getHasShepherdMoved()
-											 );
-				//System.out.println("Notifying");
-				EntityManager.getInstance().setShepherd(MyMonitor.produceResult(result));
-				//waitForResult();
-				newSim();
-			}
+			
+			// Færði þetta héðan. Ef þetta var hér kom index out of bounds ef hraðinn var aukinn of mikið.
+			/*if(hasWon || currentSimFrameCount > criticalTime){
+				win();
+			}*/
 			
 		}
 		
@@ -150,6 +147,23 @@ public class MainLoop {
 		hasWon = simulation.winCondition();
 	}
 	
+	private static void win(){
+		EntityManager em = EntityManager.getInstance();
+		SimulationResult result = 
+				new SimulationResult(em.getHerded(),
+									 currentSimFrameCount,
+									 em.getHerdDistance(),
+									 em.getHerdDensity(),
+									 em.getHasHerdMoved(),
+									 em.getDistanceToClosestSheep(),
+									 em.getHasShepherdMoved()
+									 );
+		//System.out.println("Notifying");
+		EntityManager.getInstance().setShepherd(MyMonitor.produceResult(result));
+		//waitForResult();
+		newSim();
+	}
+	
 	private static void updateInfo(){
 		// Update data in info panel
 		window.infoPanel.setData("totalTime", 	df.format(runTime/Utils.NANO));
@@ -158,6 +172,9 @@ public class MainLoop {
 		window.infoPanel.setData("gen", currentGen);
 		window.infoPanel.setData("genFrames", currentSimFrameCount);
 		window.infoPanel.setData("totalFrames", totalFrameCount);
+		window.infoPanel.setData("genIndiv", currentIndiv);
+		window.infoPanel.setData("genTourn", currentTournament);
+		window.infoPanel.setData("genTournRound", currentTournamentRound);
 	}
 	
 	private static void newSim(){

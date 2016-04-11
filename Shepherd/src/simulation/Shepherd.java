@@ -30,21 +30,24 @@ public class Shepherd extends Creature implements Comparable<Shepherd> {
 	}
 	
 	public void move(int frame, double du){
-		if(this.genes[frame] == 0){
-			this.setSpeed(-this.maxSpeed);
-		} else if (this.genes[frame] == 1){
-			this.setSpeed(0);
-		} else if (this.genes[frame] == 2){
-			this.setSpeed(this.maxSpeed);
-		}
-		
-		int l = this.genes.length/2;
-		if(this.genes[l+frame] == 0){
-			this.setRotSpeed(-this.maxRotSpeed);
-		} else if (this.genes[l+frame] == 1){
-			this.setRotSpeed(0);
-		} else if (this.genes[l+frame] == 2){
-			this.setRotSpeed(this.maxRotSpeed);
+		//System.out.println(frame);
+		if(true){
+			if(this.genes[frame] == 0){
+				this.setSpeed(-this.maxSpeed);
+			} else if (this.genes[frame] == 1){
+				this.setSpeed(0);
+			} else if (this.genes[frame] == 2){
+				this.setSpeed(this.maxSpeed);
+			}
+			
+			int l = this.genes.length/2;
+			if(this.genes[l+frame] == 0){
+				this.setRotSpeed(-this.maxRotSpeed);
+			} else if (this.genes[l+frame] == 1){
+				this.setRotSpeed(0);
+			} else if (this.genes[l+frame] == 2){
+				this.setRotSpeed(this.maxRotSpeed);
+			}
 		}
 		super.update(du);
 	}

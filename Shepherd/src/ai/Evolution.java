@@ -5,6 +5,7 @@ import simulation.MainLoop;
 import simulation.Shepherd;
 import simulation.SimulationResult;
 import threadHelpher.MyMonitor;
+import ui.MainWindow;
 
 public class Evolution {
 	
@@ -35,10 +36,12 @@ public class Evolution {
 
         
         for (int i = elitismOffset; i < pop.size(); i++) {
-        	System.out.println("Breeding for indiv " + i );
-        	//System.out.println("Selecting indiv 1");
+        	//System.out.println("Breeding for indiv " + i );
+        	MainLoop.currentIndiv = i;
+        	MainLoop.currentTournament = 1;
             Shepherd indiv1 = tournamentSelection(pop);
             //System.out.println("Selecting indiv 2");
+            MainLoop.currentTournament = 2;
             Shepherd indiv2 = tournamentSelection(pop);
             Shepherd newIndiv = crossover(indiv1, indiv2);
             newPopulation.saveIndividual(i, newIndiv);
@@ -92,6 +95,7 @@ public class Evolution {
         // Reiknum út fitness hjá hverjum einstaklingi
         for(int i = 0; i < tournamentSize; i++){
         	//System.out.println("Tournament place: " + i);
+        	MainLoop.currentTournamentRound = i+1;
     		SimulationResult result = MyMonitor.getResult(tournament.getIndividual(i));
         	tournament.getIndividual(i).setFitness(result);
         }
