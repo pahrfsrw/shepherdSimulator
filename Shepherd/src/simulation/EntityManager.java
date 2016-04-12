@@ -28,7 +28,9 @@ public class EntityManager {
 	private int sheepCol = 5;
 	private int sheepRow = 5;
 	
-	private EntityManager(){newSim();};
+	private EntityManager(){
+		newSim();
+	};
 	
 	/*
 	 * Getters
@@ -77,6 +79,7 @@ public class EntityManager {
 		MyPoint gateCenter = this.meadow.getGate().getPosition();
 		double totalDistance = 0;
 		int size = sheep.size();
+		if(size == 0) return 0;
 		for(int i = 0; i < size; i++){
 			Sheep currentSheep = sheep.get(i);
 			totalDistance += gateCenter.distance(currentSheep.getPosition());
@@ -90,6 +93,7 @@ public class EntityManager {
 		double comY = 0;
 		double density = 0;
 		int size = sheep.size();
+		if(size == 0) return 0;
 		// Reiknum út massamiðju
 		for(int i = 0; i < size; i++){
 			Sheep currentSheep = sheep.get(i);
@@ -164,7 +168,6 @@ public class EntityManager {
 	}
 	
 	public void drawShepherd(Graphics g){
-		if(shepherd == null) return;
 		shepherd.draw(g);
 	}
 	
@@ -183,13 +186,14 @@ public class EntityManager {
 	}
 	
 	public void newSim(){
+		Creature.setMeadow(meadow);
 		sheep = new ArrayList<Sheep>();
 		collectedSheep = new ArrayList<Sheep>();
 		
 		//shepherd = new Shepherd(defaultShepherdLocation);
 		//shepherd = MyMonitor.shepherd;
 		Sheep.setMeadow(meadow);
-		Shepherd.setMeadow(meadow);
+		//Shepherd.setMeadow(meadow);
 		double density = 5;
 		MyPoint topLeft = new MyPoint(350, 350);
 		MyPoint bottomRight = new MyPoint(topLeft.getX()+100, topLeft.getY()+100);

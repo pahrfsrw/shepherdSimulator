@@ -71,9 +71,13 @@ public class MainWindow implements KeyListener, MouseMotionListener, ActionListe
 					private JMenuItem mb_file_export_herd;
 					private JMenuItem mb_file_export_shepherd;
 				private JMenuItem mb_file_exit;
+			private JMenu mb_tools;
+				private JMenuItem mb_tools_openDebugger;
 		private DrawingAreaUnderlay dau;
 			private DrawingArea da;
 		public InfoPanel infoPanel;
+	
+	public DebuggerWindow debuggerWindow;
 
 	public MainWindow() {
 		initialize();
@@ -94,6 +98,7 @@ public class MainWindow implements KeyListener, MouseMotionListener, ActionListe
 		//frame.setPreferredSize(new Dimension(1000, 1000)); // Ekki setja preferred size á frame. Þá virkar frame.pack ekki fyrir undirhluti ef frame.prefSize er stærra.
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
+		
 		addMenuBar();
 		addButtonArea();
 		addGameArea();
@@ -105,7 +110,7 @@ public class MainWindow implements KeyListener, MouseMotionListener, ActionListe
 		
 		setClosingBehavior();
 		addListeners();
-		
+		debuggerWindow = new DebuggerWindow();
 	}
 	
 	private void addMenuBar(){
@@ -113,6 +118,8 @@ public class MainWindow implements KeyListener, MouseMotionListener, ActionListe
 		// Initialization
 		mb = new JMenuBar();
 		mb_file = new JMenu("File");
+		mb_tools = new JMenu("Tools");
+		mb_tools_openDebugger = new JMenuItem("Open debugger");
 		mb_file_import = new JMenu("Import");
 		mb_file_export = new JMenu("Export");
 		mb_file_exit = new JMenuItem("Exit");
@@ -139,10 +146,13 @@ public class MainWindow implements KeyListener, MouseMotionListener, ActionListe
 		mb_file.add(mb_file_exit);
 		mb.add(mb_file);
 		
+		mb_tools.add(mb_tools_openDebugger);
+		mb.add(mb_tools);
+		
 		// Layout
 		mb_file_import.setPreferredSize(new Dimension(100, 20)); // Other menus and items automatically adjust to same size.
 		
-		// Add listeners to buttons
+		// Add listeners to menu exit button
 		ExitAction ea = new ExitAction();
 		//ea.putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("control X")); // Lætur ctrl+x vera exit shortcut. Hef ekki prófað þetta.
 		mb_file_exit.addActionListener(ea);
@@ -234,6 +244,22 @@ public class MainWindow implements KeyListener, MouseMotionListener, ActionListe
 	        }
 		});
 		
+		pauseButton.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e)
+	        {
+				MainLoop.isPaused = !MainLoop.isPaused;
+	            if(MainLoop.isPaused){
+	            	pauseButton.setText("Resume simulation");
+	            	MainLoop.pauseTime = System.nanoTime() - MainLoop.pauseTime;
+	            }
+	            else{
+	            	pauseButton.setText("Pause simulation");
+	            	MainLoop.pauseTime = System.nanoTime() - MainLoop.pauseTime;
+	            }
+	        }
+		});
+		
 		speedSlider.addChangeListener(new ChangeListener(){
 			@Override
 			public void stateChanged(ChangeEvent e)
@@ -256,6 +282,14 @@ public class MainWindow implements KeyListener, MouseMotionListener, ActionListe
 				else
 					MainLoop.gameSpeed = speedSlider.getValue();
 				
+	        }
+		});
+		
+		mb_tools_openDebugger.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e)
+	        {
+				debuggerWindow = new DebuggerWindow();
 	        }
 		});
 		

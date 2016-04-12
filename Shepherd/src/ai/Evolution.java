@@ -61,7 +61,7 @@ public class Evolution {
 
     // Crossover individuals
     private static Shepherd crossover(Shepherd indiv1, Shepherd indiv2) {
-    	Shepherd newSol = new Shepherd();
+    	Shepherd newSol = new Shepherd(100, 450);
         // Loop through genes
         for (int i = 0; i < indiv1.size(); i++) {
             // Crossover

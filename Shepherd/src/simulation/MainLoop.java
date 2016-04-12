@@ -8,6 +8,7 @@ import ai.Evolution;
 import ai.Population;
 import threadHelpher.MyMonitor;
 import ui.MainWindow;
+import utilities.MyPoint;
 import utilities.Utils;
 
 public class MainLoop {
@@ -149,6 +150,7 @@ public class MainLoop {
 			
 			if(doInfoUpdates){
 				updateInfo();
+				updateDebuggerInfo();
 			}
 			
 			
@@ -223,6 +225,13 @@ public class MainLoop {
 		window.infoPanel.setData("genIndiv", currentIndiv);
 		window.infoPanel.setData("bestTime", allTimeBestTime);
 		window.infoPanel.setData("mostSheepHerded", allTimeMostSheepHerded);
+	}
+	
+	public static void updateDebuggerInfo(){
+		MyPoint p = EntityManager.getInstance().getShepherd().loc;
+		int x = (int) Math.round(p.getX());
+		int y = (int) Math.round(p.getY());
+		window.debuggerWindow.setData("shepCoord", "X: " + x + " Y: " + y);
 	}
 	
 	private static void newSim(){

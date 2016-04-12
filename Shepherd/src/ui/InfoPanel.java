@@ -21,6 +21,11 @@ public class InfoPanel extends JPanel {
 		this.setLayout(layout);
 	}
 	
+	InfoPanel(int width){
+		layout = new GridLayout(0, width);
+		this.setLayout(layout);
+	}
+	
 	void addCell(Object name){
 		Cell cell = new Cell();
 		map.put(name.toString(), panelSize++);

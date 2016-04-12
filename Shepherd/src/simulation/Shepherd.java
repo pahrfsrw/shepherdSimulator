@@ -18,7 +18,7 @@ public class Shepherd extends Creature implements Comparable<Shepherd> {
 	
 	// Constructors
 	public Shepherd(){
-		super();
+		super(100, 450);
 	}
 	
 	public Shepherd(MyPoint p){
