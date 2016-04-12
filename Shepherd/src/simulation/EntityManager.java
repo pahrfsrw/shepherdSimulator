@@ -14,7 +14,7 @@ public class EntityManager {
 	
 	private static EntityManager INSTANCE = new EntityManager();
 	
-	private static Population pop = new Population(50, true);
+	private Population pop = new Population(50, true);
 	
 	private MyPoint defaultShepherdLocation = new MyPoint(100, 450);
 	private Shepherd shepherd;
@@ -201,6 +201,13 @@ public class EntityManager {
 		//MyPoint[] points = Utils.initPointsRand(150, new MyPoint(20, 20), new MyPoint(480, 480));
 		for(int i = 0; i < points.length; i++){
 			sheep.add(new Sheep(points[i]));
+		}
+	}
+	
+	public void printPop(){
+		System.out.println("Population from EntityManager (prints only ten): ");
+		for(int i = 0; i < 10; i++){
+			System.out.println(pop.getIndividual(i).loc);
 		}
 	}
 

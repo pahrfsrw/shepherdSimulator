@@ -190,8 +190,6 @@ public class MainLoop {
 		}
 		EntityManager.getInstance().setShepherd(MyMonitor.produceResult(result));
 
-		
-		
 		newSim();
 	}
 	
@@ -228,6 +226,7 @@ public class MainLoop {
 	}
 	
 	public static void updateDebuggerInfo(){
+		if(!window.debuggerWindow.isVisible()) return;
 		MyPoint p = EntityManager.getInstance().getShepherd().loc;
 		int x = (int) Math.round(p.getX());
 		int y = (int) Math.round(p.getY());
@@ -242,38 +241,16 @@ public class MainLoop {
 	}
 	
 	private static void evolutionLoop(){
-		Population pop = EntityManager.getInstance().getPopulation();
+		Population pop;
 		while(true){
+			System.out.println("Pre");
+			EntityManager.getInstance().printPop();
+			pop = EntityManager.getInstance().getPopulation();
 			pop = Evolution.evolvePopulation(pop);
+			System.out.println("Post");
+			EntityManager.getInstance().printPop();
 		}
 	}
-	
-	/*public static void notifyTournament(Shepherd s){
-		latch.countDown();
-		isWaiting = false;
-		currentShepherd = s;
-		latch = new CountDownLatch(1);
-	}
-	
-	public static void notifyGeneration(Shepherd s){
-		latch.countDown();
-		isWaiting = false;
-		currentShepherd = s;
-		currentGen++;
-		newSim();
-		latch = new CountDownLatch(1);
-	}
-	
-	private synchronized static void waitForResult(){
-		try{
-    		latch.wait();
-    	} catch (InterruptedException e){
-    		e.printStackTrace();
-    	}
-		isWaiting = false;
-		//while(isWaiting){}
-    	currentShepherd = null;
-    }*/
 	
 	
 	public static void main(String[] args) {

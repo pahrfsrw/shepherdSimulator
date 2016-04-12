@@ -42,6 +42,16 @@ public class Population {
 	}
 	
 	public void saveIndividual(int index, Shepherd individual){
-		individuals[index] = individual;
+		individuals[index] = individual.clone();
+	}
+	
+	@Override
+	public String toString(){
+		String s = "";
+		for(int i = 0; i < this.individuals.length; i++){
+			s += this.individuals[i].getPosition().toString();
+			s += "\n";
+		}
+		return s;
 	}
 }

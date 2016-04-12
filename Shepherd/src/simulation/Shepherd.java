@@ -70,20 +70,20 @@ public class Shepherd extends Creature implements Comparable<Shepherd> {
 	}
 	
 	public void setGene(int index, byte value) {
-        genes[index] = value;
+        this.genes[index] = value;
     }
 	
 	// Other methods
 	public void generateShepherd(){
 		for (int i = 0; i < size(); i++) {
            byte gene = (byte)(Math.floor(3*Math.random()));
-           genes[i] = gene;
+           this.genes[i] = gene;
            //genes[i] = 0;
         }
 	}
 	
 	public int size() {
-        return genes.length;
+        return this.genes.length;
     }
 	
 	@Override
@@ -97,5 +97,13 @@ public class Shepherd extends Creature implements Comparable<Shepherd> {
 	
 	public int compareTo(Shepherd s){
 		return(this.fitness.compareTo(s.getFitness()));
+	}
+	
+	@Override
+	public Shepherd clone(){
+		Shepherd clone = new Shepherd(this.loc);
+		clone.genes = this.genes.clone();
+		clone.fitness = this.fitness.clone();
+		return clone;
 	}
 }

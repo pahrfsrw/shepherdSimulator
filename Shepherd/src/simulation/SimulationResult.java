@@ -68,4 +68,17 @@ public class SimulationResult implements Comparable<SimulationResult>{
 			}
 		}
 	}
+	
+	@Override
+	public SimulationResult clone(){
+		return new SimulationResult(
+					this.sheepHerded,
+					this.time,
+					this.avgHerdDistance,
+					this.herdDensity,
+					this.hasHerdMoved,
+					this.distanceToClosestSheep,
+					this.hasShepherdMoved
+				);
+	}
 }

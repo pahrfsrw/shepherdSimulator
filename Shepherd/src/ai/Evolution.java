@@ -1,6 +1,7 @@
 package ai;
 import java.util.concurrent.CountDownLatch;
 
+import simulation.EntityManager;
 import simulation.MainLoop;
 import simulation.Shepherd;
 import simulation.SimulationResult;
@@ -48,14 +49,19 @@ public class Evolution {
         	Shepherd indiv1 = tournamentSelection(pop);
             Shepherd indiv2 = tournamentSelection(pop);
             Shepherd newIndiv = crossover(indiv1, indiv2);
+            //System.out.println("Msg. 1 from Evolution: " + newIndiv.getPosition().toString());
             newPopulation.saveIndividual(i, newIndiv);
+            //System.out.println("Msg. 2 from Evolution: " + newPopulation.getIndividual(i).getPosition().toString());
         }
 
         // Mutate population
         for (int i = elitismOffset; i < newPopulation.size(); i++) {
             mutate(newPopulation.getIndividual(i));
+            //System.out.println("Msg. 3 from Evolution: " + newPopulation.getIndividual(i).getPosition().toString());
         }
-
+        
+        System.out.println("Msg. 4 from Evolution (toString): ");
+        System.out.println(newPopulation);
         return newPopulation;
     }
 
