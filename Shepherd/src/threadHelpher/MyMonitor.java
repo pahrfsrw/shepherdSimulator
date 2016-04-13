@@ -27,9 +27,9 @@ public class MyMonitor {
 		else
 			shepherd = s;
 		EntityManager.getInstance().setShepherd(s);
-		noShepherd.signal();
+		
 		try{
-			
+			noShepherd.signal();
 			while(result == null)
 			{
 				noResult.await();
@@ -70,6 +70,27 @@ public class MyMonitor {
 			// Einhverra hluta vegna lagast corruption á upplýsingum sem ég sendi á milli ef
 			// ég útbý clone aðferð og skila clone. Ég veit ekki af hverju.
 			// Corruptionið fólst í því að hnitin á Shepherd sem var skilað voru öll í rugli og eflaust gerðist eitthvað meira.
+			s = shepherd.clone();
+			shepherd = null;
+			lock.unlock();
+		}
+		return s;
+	}
+	
+	public static Shepherd init(){
+		lock.lock();
+		Shepherd s;
+		try{
+			while(shepherd == null)
+			{
+				noShepherd.await();
+			}
+			
+		} catch (InterruptedException e){
+			e.printStackTrace();
+		}
+		finally
+		{
 			s = shepherd.clone();
 			shepherd = null;
 			lock.unlock();

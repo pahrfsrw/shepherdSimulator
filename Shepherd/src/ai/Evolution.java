@@ -10,16 +10,11 @@ import ui.MainWindow;
 
 public class Evolution {
 	
-	private static boolean isWaiting = false;
-	private static CountDownLatch latch = new CountDownLatch(1);
-	private static MyMonitor monitor = MainLoop.monitor;
 	private static final double uniformRate = 0.5;
     private static final double mutationRate = 0.1;
     public static final int tournamentSize = 10;
     private static final boolean elitism = true;
-    private static final int defaultElitismOffset = 1; // Það virðist hættulegt að stækka þ
-    
-    private static SimulationResult result;
+    private static final int defaultElitismOffset = 1; // Það virðist hættulegt að stækka þetta. Ég veit ekki af hverju.
     
     public static Population evolvePopulation(Population pop) {
     	MainLoop.currentGen++;

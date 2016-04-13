@@ -6,6 +6,7 @@ import java.util.concurrent.CountDownLatch;
 
 import ai.Evolution;
 import ai.Population;
+import ai.PopulationManager;
 import threadHelpher.MyMonitor;
 import ui.MainWindow;
 import utilities.MyPoint;
@@ -13,12 +14,7 @@ import utilities.Utils;
 
 public class MainLoop {
 	
-	private final Object lock = new Object();
-	public static MyMonitor monitor = new MyMonitor();
-	
 	public static MainWindow window;
-	private static boolean isWaiting = false;
-	private static CountDownLatch latch = new CountDownLatch(1);
 	
 	// Variables and constants
 	public static boolean isRunning = true;
@@ -97,7 +93,8 @@ public class MainLoop {
 	}
 	
 	private static void gameLoop(){
-		MyMonitor.produceResult(null);
+		EntityManager.getInstance().setShepherd(MyMonitor.init());
+		window = new MainWindow();
 		
 		final int TARGET_FPS = 60;
 		
@@ -134,6 +131,7 @@ public class MainLoop {
 					updateSimulationData();
 					if(hasWon || currentSimFrameCount > criticalTime){
 						win();
+						break;
 					}
 				}
 				
@@ -188,9 +186,11 @@ public class MainLoop {
 		if(currentSimFrameCount < allTimeBestTime){
 			allTimeBestTime = currentSimFrameCount;
 		}
-		EntityManager.getInstance().setShepherd(MyMonitor.produceResult(result));
+		
 
 		newSim();
+		EntityManager.getInstance().setShepherd(MyMonitor.produceResult(result));
+		hasWon = false;
 	}
 	
 	private static void updateSimulationData(){
@@ -237,18 +237,17 @@ public class MainLoop {
 		currentSimStartTime = System.nanoTime();
 		currentSimFrameCount = 0;
 		EntityManager.getInstance().newSim();
-		hasWon = false;
 	}
 	
 	private static void evolutionLoop(){
 		Population pop;
 		while(true){
 			System.out.println("Pre");
-			EntityManager.getInstance().printPop();
-			pop = EntityManager.getInstance().getPopulation();
+			PopulationManager.printPop();
+			pop = PopulationManager.getPopulation();
 			pop = Evolution.evolvePopulation(pop);
 			System.out.println("Post");
-			EntityManager.getInstance().printPop();
+			PopulationManager.printPop();
 		}
 	}
 	
@@ -257,7 +256,7 @@ public class MainLoop {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					window = new MainWindow();
+					
 					runGameLoop();
 					runEvolutionLoop();
 				} catch (Exception e) {

@@ -14,13 +14,11 @@ public class EntityManager {
 	
 	private static EntityManager INSTANCE = new EntityManager();
 	
-	private Population pop = new Population(50, true);
-	
 	private MyPoint defaultShepherdLocation = new MyPoint(100, 450);
-	private Shepherd shepherd;
-	private ArrayList<Sheep> sheep;
-	private ArrayList<Sheep> collectedSheep;
-	private Meadow meadow = new Meadow();
+	private volatile Shepherd shepherd;
+	private volatile ArrayList<Sheep> sheep;
+	private volatile ArrayList<Sheep> collectedSheep;
+	private volatile Meadow meadow = new Meadow();
 	
 	private boolean hasHerdMoved = false;
 	private boolean hasShepherdMoved = false;
@@ -69,10 +67,6 @@ public class EntityManager {
 	
 	public int getHerdSize(){
 		return sheep.size();
-	}
-	
-	public Population getPopulation(){
-		return pop;
 	}
 	
 	public double getHerdDistance(){
@@ -204,12 +198,7 @@ public class EntityManager {
 		}
 	}
 	
-	public void printPop(){
-		System.out.println("Population from EntityManager (prints only ten): ");
-		for(int i = 0; i < 10; i++){
-			System.out.println(pop.getIndividual(i).loc);
-		}
-	}
+
 
 	
 }
