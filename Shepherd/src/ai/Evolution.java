@@ -11,7 +11,7 @@ import ui.MainWindow;
 public class Evolution {
 	
 	private static final double uniformRate = 0.5;
-    private static final double mutationRate = 0.1;
+    private static final double mutationRate = 0.02;
     public static final int tournamentSize = 10;
     private static final boolean elitism = true;
     private static final int defaultElitismOffset = 1; // Það virðist hættulegt að stækka þetta. Ég veit ekki af hverju.
@@ -35,7 +35,8 @@ public class Evolution {
         
         for (int i = 0; i < pop.size(); i++) {
         	MainLoop.currentIndiv = i+1;
-        	testIndividual(pop.getIndividual(i));
+        	Shepherd indiv = pop.getIndividual(i);
+        	testIndividual(indiv);
         }
         
         pop.sort();
@@ -55,8 +56,15 @@ public class Evolution {
             //System.out.println("Msg. 3 from Evolution: " + newPopulation.getIndividual(i).getPosition().toString());
         }
         
-        System.out.println("Msg. 4 from Evolution (toString): ");
-        System.out.println(newPopulation);
+        //System.out.println("Msg. 4 from Evolution (toString): ");
+        //System.out.println(newPopulation);
+        
+        // Reset the position of any individuals that e.g. passed through because of elitism.
+        for (int i = 0; i < pop.size(); i++){
+        	Shepherd indiv = pop.getIndividual(i);
+        	indiv.move(100, 450);
+        }
+        
         return newPopulation;
     }
 
@@ -81,14 +89,14 @@ public class Evolution {
         for (int i = 0; i < indiv.size(); i++) {
             if (Math.random() <= mutationRate) {
                 // Create random gene
-                byte gene = (byte) Math.round(Math.random());
+            	byte gene = (byte)(Math.floor(3*Math.random()));
                 indiv.setGene(i, gene);
             }
         }
     }
     
     private static void testIndividual(Shepherd s){
-    	SimulationResult result = MyMonitor.getResult(s);
+    	SimulationResult result = MainLoop.gameLoop(s);
     	s.setFitness(result);
     }
 

@@ -8,6 +8,7 @@ import javax.swing.JFrame;
 public class DebuggerWindow extends JFrame {
 	
 	private InfoPanel shepherdPanel;
+	private DebuggerTable populationTable;
 	
 	public DebuggerWindow() {
 		this.initialize();
@@ -22,16 +23,29 @@ public class DebuggerWindow extends JFrame {
 		
 		this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		
-		this.setPreferredSize(new Dimension(300, 300));
+		//this.setPreferredSize(new Dimension(400, 300));
 		
-		this.pack();
+		
 		
 		shepherdPanel = new InfoPanel(1);
 		shepherdPanel.addCell("shepCoord", "Shepherd coordinates: ", "n/a");
 		this.add(shepherdPanel);
+		
+		populationTable = new DebuggerTable();
+		this.add(populationTable);
+		
+		this.pack();
 	}
 	
 	public void setData(String name, Object data){
 		shepherdPanel.setData(name, data);
+	}
+	
+	public void resetPopulationData(Object[][] data){
+		this.populationTable.resetData(data);
+	}
+	
+	public void editPopulationData(int rowIndex, Object[] data){
+		this.populationTable.updateData(rowIndex, data);
 	}
 }

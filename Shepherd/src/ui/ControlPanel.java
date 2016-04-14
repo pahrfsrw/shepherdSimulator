@@ -37,7 +37,7 @@ class ControlPanel extends JPanel{
 		this.setLayout(layout);
 		
 		/* Initialize instance variables */
-		speedSlider = new JSlider(JSlider.HORIZONTAL, 0, 150, 10);
+		speedSlider = new JSlider(JSlider.HORIZONTAL, 0, 300, 10);
 		maxSpeed = new JCheckBox();
 		pause = new JButton("Pause simulation");
 		speedSliderText = new JLabel("Simulation speed");

@@ -27,8 +27,28 @@ public class EntityManager {
 	private int sheepRow = 5;
 	
 	private EntityManager(){
-		newSim();
+		//newSim();
+		placeHolderSim();
 	};
+	
+	private void placeHolderSim(){
+		shepherd = new Shepherd();
+		Creature.setMeadow(meadow);
+		sheep = new ArrayList<Sheep>();
+		collectedSheep = new ArrayList<Sheep>();
+		//shepherd = new Shepherd(defaultShepherdLocation);
+		//shepherd = MyMonitor.shepherd;
+		Sheep.setMeadow(meadow);
+		//Shepherd.setMeadow(meadow);
+		double density = 5;
+		MyPoint topLeft = new MyPoint(350, 350);
+		MyPoint bottomRight = new MyPoint(topLeft.getX()+100, topLeft.getY()+100);
+		MyPoint[] points = Utils.initPoints(sheepCol, sheepRow, topLeft, bottomRight, density);
+		//MyPoint[] points = Utils.initPointsRand(150, new MyPoint(20, 20), new MyPoint(480, 480));
+		for(int i = 0; i < points.length; i++){
+			sheep.add(new Sheep(points[i]));
+		}
+	}
 	
 	/*
 	 * Getters
@@ -179,11 +199,12 @@ public class EntityManager {
 		meadow.draw(g);
 	}
 	
-	public void newSim(){
+	public void newSim(Shepherd s){
 		Creature.setMeadow(meadow);
 		sheep = new ArrayList<Sheep>();
 		collectedSheep = new ArrayList<Sheep>();
 		
+		shepherd = s;
 		//shepherd = new Shepherd(defaultShepherdLocation);
 		//shepherd = MyMonitor.shepherd;
 		Sheep.setMeadow(meadow);

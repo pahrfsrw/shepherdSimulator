@@ -65,6 +65,9 @@ public class MainLoop {
 		// Þetta virkar eins og meðalfjarlægðin.
 		public static double sumHerdDensity = 0;
 		
+		//
+		public static double leastDistanceToAnySheep = Double.MAX_VALUE;
+		
 		// Minnstu tölurnar yfir alla hermunina. Það er spurning hvort maður vilji nota þetta.
 		public static final boolean calculateLeastDistance = true;
 		public static double smallestHerdDistance = Double.MAX_VALUE;
@@ -86,27 +89,50 @@ public class MainLoop {
 	      {
 	         public void run()
 	         {
-	            gameLoop();
+	            simulationLoop();
 	         }
 	      };
 	      loop.start();
 	}
 	
-	private static void gameLoop(){
-		EntityManager.getInstance().setShepherd(MyMonitor.init());
+	private static void simulationLoop(){
+		//EntityManager.getInstance().setShepherd(MyMonitor.init());
+		
+		// Þetta er til þess að geta teiknað gluggann (window) rétt í upphafi og það komi ekki nullpointer exception
+		// þegar EntityManager reynir að teikna Shepherd.
+		Shepherd tempPlaceholder = new Shepherd();
+		EntityManager.getInstance().setShepherd(tempPlaceholder);
 		window = new MainWindow();
 		
-		final int TARGET_FPS = 60;
-		
-		final long TIME_BETWEEN_UPDATES = 1000000000 / TARGET_FPS;
-
-		long nextTime = System.nanoTime();
 	    
 	    // Notað til að fylgjast með hvað forritið er búið að keyra lengi.
 	    startTime = System.nanoTime();
 	    currentSimStartTime = System.nanoTime();
 	    
-		while (isRunning && currentGen < criticalGen){
+	    while (isRunning && currentGen < criticalGen){
+	    	
+	    	window.debuggerWindow.resetPopulationData(PopulationManager.getPopInfo());
+	    	Population pop = PopulationManager.getPopulation();
+	    	//System.out.println();
+	    	//System.out.println("From mainLoop");
+	    	//System.out.println(pop);
+	    	//pop = Evolution.evolvePopulation(pop);
+	    	PopulationManager.setPopulation(Evolution.evolvePopulation(PopulationManager.getPopulation()));
+	    	
+	    	
+	    }
+	}
+	
+	public static SimulationResult gameLoop(Shepherd s){
+		newSim(s);
+		
+		final int TARGET_FPS = 60;
+		final long TIME_BETWEEN_UPDATES = 1000000000 / TARGET_FPS;
+		long nextTime = System.nanoTime();
+		
+		SimulationResult result = null;
+	    
+		while (currentSimFrameCount < criticalTime){
 			
 			long currentTime = System.nanoTime();
 			runTime = currentTime - startTime;
@@ -130,7 +156,7 @@ public class MainLoop {
 					totalFrameCount++;
 					updateSimulationData();
 					if(hasWon || currentSimFrameCount > criticalTime){
-						win();
+						result = win();
 						break;
 					}
 				}
@@ -144,7 +170,7 @@ public class MainLoop {
 				} catch (InterruptedException e){
 					e.printStackTrace();
 				}
-			};
+			}
 			
 			if(doInfoUpdates){
 				updateInfo();
@@ -152,13 +178,10 @@ public class MainLoop {
 			}
 			
 			
-			// Færði þetta héðan. Ef þetta var hér kom index out of bounds ef hraðinn var aukinn of mikið.
-			/*if(hasWon || currentSimFrameCount > criticalTime){
-				win();
-			}*/
 			
 		}
 		
+		return result;
 	}
 	
 	private static void updateSim(double du){	
@@ -168,15 +191,15 @@ public class MainLoop {
 		hasWon = simulation.winCondition();
 	}
 	
-	private static void win(){
+	private static SimulationResult win(){
 		EntityManager em = EntityManager.getInstance();
 		SimulationResult result = 
 				new SimulationResult(em.getHerded(),
 									 currentSimFrameCount,
-									 smallestHerdDistance/(double)numberOfSnapshots,
-									 smallestHerdDensity/(double)numberOfSnapshots,
+									 sumHerdDistance/(double)numberOfSnapshots,
+									 sumHerdDensity/(double)numberOfSnapshots,
 									 em.getHasHerdMoved(),
-									 em.getDistanceToClosestSheep(),
+									 leastDistanceToAnySheep,
 									 em.getHasShepherdMoved()
 									 );
 		if(em.getHerded() > allTimeMostSheepHerded){
@@ -187,10 +210,11 @@ public class MainLoop {
 			allTimeBestTime = currentSimFrameCount;
 		}
 		
-
-		newSim();
-		EntityManager.getInstance().setShepherd(MyMonitor.produceResult(result));
+		//em.getShepherd().move(100, 450);
+		//newSim();
+		//EntityManager.getInstance().setShepherd(MyMonitor.produceResult(result));
 		hasWon = false;
+		return result;
 	}
 	
 	private static void updateSimulationData(){
@@ -199,8 +223,13 @@ public class MainLoop {
 			EntityManager em = EntityManager.getInstance();
 			double currentHerdDistance = em.getHerdDistance();
 			double currentHerdDensity = em.getHerdDensity();
+			double smallestDistanceToSheep = em.getDistanceToClosestSheep();
 			sumHerdDistance += currentHerdDistance;
 			sumHerdDensity += currentHerdDensity;
+			if(smallestDistanceToSheep < leastDistanceToAnySheep){
+				leastDistanceToAnySheep = smallestDistanceToSheep;
+			}
+			
 			numberOfSnapshots++;
 			
 			if(calculateLeastDistance){
@@ -227,16 +256,19 @@ public class MainLoop {
 	
 	public static void updateDebuggerInfo(){
 		if(!window.debuggerWindow.isVisible()) return;
-		MyPoint p = EntityManager.getInstance().getShepherd().loc;
+		Shepherd s = EntityManager.getInstance().getShepherd();
+		MyPoint p = s.loc;
 		int x = (int) Math.round(p.getX());
 		int y = (int) Math.round(p.getY());
 		window.debuggerWindow.setData("shepCoord", "X: " + x + " Y: " + y);
+		Object[] o = {new Integer(currentIndiv-1), "n/a", "n/a", new Double(s.loc.getX()), new Double(s.loc.getY())};
+		window.debuggerWindow.editPopulationData(currentIndiv-1, o);
 	}
 	
-	private static void newSim(){
+	private static void newSim(Shepherd s){
 		currentSimStartTime = System.nanoTime();
 		currentSimFrameCount = 0;
-		EntityManager.getInstance().newSim();
+		EntityManager.getInstance().newSim(s);
 	}
 	
 	private static void evolutionLoop(){
@@ -258,7 +290,7 @@ public class MainLoop {
 				try {
 					
 					runGameLoop();
-					runEvolutionLoop();
+					//runEvolutionLoop();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
